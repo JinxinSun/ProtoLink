@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import prototypeModel, { PrototypeItem } from '../models/prototype';
 
 /**
  * 存储服务 - 处理文件保存和目录结构维护
@@ -20,8 +21,20 @@ class StorageService {
    * @returns 保存结果，包含ID和路径
    */
   async savePrototype(files: Express.Multer.File[], prototypeName: string): Promise<{ id: string, path: string }> {
-    // 生成唯一ID
-    const prototypeId = uuidv4();
+    // 检查是否已存在同名原型
+    const existingPrototype = prototypeModel.getPrototypeByName(prototypeName);
+    let prototypeId: string;
+    
+    if (existingPrototype) {
+      // 如果存在同名原型，使用原ID并删除旧文件
+      prototypeId = existingPrototype.id;
+      console.log(`发现同名原型: ${prototypeName}，将覆盖现有文件，ID: ${prototypeId}`);
+      await this.deletePrototype(prototypeId);
+    } else {
+      // 生成新的唯一ID
+      prototypeId = uuidv4();
+      console.log(`创建新原型: ${prototypeName}，ID: ${prototypeId}`);
+    }
     
     // 创建原型目录
     const prototypePath = path.join(this.baseDir, prototypeId);
@@ -57,6 +70,20 @@ class StorageService {
         console.error(`处理文件 ${file.originalname} 失败:`, error);
         throw error;
       }
+    }
+    
+    // 更新或创建原型数据记录
+    if (existingPrototype) {
+      // 更新已有记录
+      prototypeModel.updatePrototype(prototypeId, {
+        file_path: prototypePath,
+      });
+    } else {
+      // 创建新记录
+      prototypeModel.createPrototype({
+        name: prototypeName,
+        file_path: prototypePath,
+      });
     }
     
     return {

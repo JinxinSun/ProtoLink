@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { HomePage } from './pages';
+import { HomePage, SuccessPage } from './pages';
 import './App.css';
 
 const App: React.FC = () => {
@@ -9,6 +9,7 @@ const App: React.FC = () => {
       <div className="app">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/success" element={<SuccessPage />} />
           {/* 其他路由将在后续任务中添加 */}
         </Routes>
       </div>

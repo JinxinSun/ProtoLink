@@ -1,0 +1,22 @@
+.progress-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-name {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ant-progress-text {
+  font-weight: bold;
+}
+
+.progress-container {
+  margin: 16px 0;
+} 

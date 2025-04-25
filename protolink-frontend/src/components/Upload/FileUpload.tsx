@@ -36,6 +36,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected }) => {
       
       if (containsDirectory) {
         onFilesSelected(e.dataTransfer.files);
+        // 重置文件输入框，以便能够重复上传相同文件夹
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       } else {
         alert('请上传包含 Axure HTML 的文件夹');
       }
@@ -46,6 +50,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected }) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       onFilesSelected(files);
+      
+      // 重置文件输入框的值，以便能够重新选择相同的文件夹
+      if (fileInputRef.current) {
+        // 使用延迟重置，确保上传处理完成
+        setTimeout(() => {
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        }, 100);
+      }
     }
   };
 

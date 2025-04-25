@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import StorageService from '../services/storage';
+import prototypeModel from '../models/prototype';
 
 // 初始化存储服务
 const storageService = new StorageService();
@@ -26,20 +27,26 @@ class UploadController {
 
       // 获取原型名称（从请求参数或使用默认名称）
       const prototypeName = req.body.name || '未命名原型';
+      
+      // 检查是否为覆盖上传
+      const isOverwrite = !!prototypeModel.getPrototypeByName(prototypeName);
 
       // 使用存储服务保存文件
       const result = await storageService.savePrototype(req.files as Express.Multer.File[], prototypeName);
+      
+      // 获取完整的原型信息
+      const prototype = prototypeModel.getPrototypeById(result.id);
 
       // 返回成功响应
       res.status(201).json({
         success: true,
-        message: '原型上传成功',
+        message: isOverwrite ? '原型覆盖上传成功' : '原型上传成功',
         data: {
           id: result.id,
           name: prototypeName,
-          // 在实际项目中，这里会集成短链接生成逻辑
-          // shortLink 将在 TASK-2-1 中实现
-          path: result.path
+          path: result.path,
+          short_link: prototype?.short_link,
+          is_overwrite: isOverwrite
         }
       });
     } catch (error) {

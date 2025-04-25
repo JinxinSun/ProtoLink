@@ -4,6 +4,19 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:3000/api';
 
 /**
+ * 上传响应数据结构
+ */
+export interface UploadResponse {
+  success: boolean;
+  id?: string;
+  name?: string; 
+  path?: string;
+  short_link?: string;
+  message?: string;
+  is_overwrite?: boolean;
+}
+
+/**
  * 上传文件夹到服务器
  * @param files 要上传的文件列表
  * @param onProgress 进度回调函数
@@ -12,7 +25,7 @@ const API_BASE_URL = 'http://localhost:3000/api';
 export const uploadPrototype = async (
   files: FileList,
   onProgress?: (percent: number) => void
-): Promise<{ success: boolean; id?: string; name?: string; path?: string; message?: string }> => {
+): Promise<UploadResponse> => {
   try {
     // 创建FormData对象
     const formData = new FormData();

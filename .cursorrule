@@ -1,0 +1,85 @@
+# AI协同开发通用结构规范（Universal AI-Friendly Code Structure Rule）
+
+本规则适用于任何前端或全栈项目，指导AI按统一的组件化、模块化方式生成结构清晰、易于维护、便于扩展的项目代码。
+
+---
+
+## 📁 一、项目目录结构规范
+
+### 1. pages/ 页面文件
+- 每个页面一个文件，如 UploadPage.jsx、PreviewPage.jsx
+- 页面内部包含的 UI 组件、局部逻辑函数应保持在页面文件内部，或建立子目录
+
+### 2. components/ 可复用 UI 组件
+- 所有**多个页面共享的 UI 功能**均应拆为组件
+- 每个组件建议使用独立文件夹封装样式与逻辑
+  ```
+  components/
+    └── Button/
+        ├── index.jsx
+        ├── style.css
+  ```
+
+### 3. hooks/ 自定义逻辑 Hook
+- 所有有状态、副作用或跨页面逻辑应封装为 Hook（如 `useAuth.js`, `useFetch.js`）
+
+### 4. services/ 请求接口服务层
+- 所有 HTTP 请求逻辑封装为服务函数
+- 推荐按资源或模块拆分，如 `userService.js`, `uploadService.js`
+
+### 5. utils/ 工具函数
+- 所有与视图无关的纯函数统一存放（如压缩、加解密、格式转换）
+
+### 6. layout/ 通用布局
+- 如项目存在多个页面共享的结构（如导航栏、页脚），建议封装 Layout 模板供页面嵌套使用
+
+---
+
+## 🔧 二、功能拆分原则
+
+### ✅ 聚合功能拆分
+- **页面专属逻辑/UI** 不应拆分为全局组件，保持聚合在页面文件中
+- 若单页功能复杂、体积大，可拆为局部子模块放入子目录，如：
+  ```
+  pages/
+    └── UploadPage/
+        ├── index.jsx
+        └── UploadForm.jsx
+  ```
+
+### ♻️ 可复用性优先
+- 所有**具备复用价值的功能、UI或逻辑**，应抽象为组件、Hook或工具函数
+- 可复用标准：
+  - 多页面中出现
+  - 有一定通用性（上传、弹窗、表单、导航等）
+  - 未来可能扩展或更改
+
+---
+
+## 📦 三、命名与组织规范
+
+- 页面：`PageName.jsx`
+- 可复用组件：功能名命名（如 `UploadBox.jsx`）
+- Hook：`useXxx.js`（如 `useToggle.js`）
+- 服务函数：动宾结构命名（如 `uploadFile`, `fetchUserList`）
+- 工具函数：函数式命名（如 `formatDate`, `compressImage`）
+
+---
+
+## 🤖 四、AI协同开发建议
+
+- 入口文件仅负责应用启动与模块注册，不应包含任何业务逻辑或功能实现。
+- 所有功能逻辑必须以模块方式组织，并通过引用在入口文件中集成。
+
+- 所有功能应判断是否具备复用性，复用功能请封装为组件或模块
+- 请避免将多个功能写入同一个文件，保持单一职责
+- 页面布局应统一通过 Layout 控制，避免重复生成结构（如导航栏）
+- 拆分后请标明路径与功能，如：
+  - `components/NavBar/index.jsx`：全站导航栏组件
+  - `hooks/useUpload.js`：文件上传逻辑
+  - `utils/parseUrl.js`：链接解析函数
+- 若功能不确定是否应拆出，可标注 `// TODO: 可提炼组件` 供后续优化
+
+---
+
+本规范适用于：React、Vue、Svelte、Next.js、Nuxt.js 等常见前端框架，亦适配 AI 辅助开发场景（如 ChatGPT、Cursor、Copilot）。

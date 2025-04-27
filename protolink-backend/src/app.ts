@@ -5,6 +5,7 @@ import path from 'path';
 
 // 导入路由
 import uploadRoutes from './routes/upload';
+import prototypeRoutes from './routes/prototype';
 
 // 加载环境变量
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/static', express.static(path.join(process.cwd(), 'uploads')));
 
 // 注册路由
 app.use('/api/upload', uploadRoutes);
+app.use('/api/prototype', prototypeRoutes);
 
 // 测试路由
 app.get('/', (req, res) => {

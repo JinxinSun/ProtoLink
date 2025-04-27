@@ -28,8 +28,9 @@ class UploadController {
       // 获取原型名称（从请求参数或使用默认名称）
       const prototypeName = req.body.name || '未命名原型';
       
-      // 检查是否为覆盖上传
-      const isOverwrite = !!prototypeModel.getPrototypeByName(prototypeName);
+      // 检查是否为覆盖上传（注意此处只是预检，实际操作在Storage Service中）
+      const existingPrototype = prototypeModel.getPrototypeByName(prototypeName);
+      const isOverwrite = !!existingPrototype;
 
       // 使用存储服务保存文件
       const result = await storageService.savePrototype(req.files as Express.Multer.File[], prototypeName);

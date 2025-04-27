@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import prototypeModel, { PrototypeItem } from '../models/prototype';
 
 /**
@@ -24,10 +25,12 @@ class StorageService {
     // 检查是否已存在同名原型
     const existingPrototype = prototypeModel.getPrototypeByName(prototypeName);
     let prototypeId: string;
+    let isOverwrite = false;
     
     if (existingPrototype) {
       // 如果存在同名原型，使用原ID并删除旧文件
       prototypeId = existingPrototype.id;
+      isOverwrite = true;
       console.log(`发现同名原型: ${prototypeName}，将覆盖现有文件，ID: ${prototypeId}`);
       await this.deletePrototype(prototypeId);
     } else {
@@ -73,16 +76,18 @@ class StorageService {
     }
     
     // 更新或创建原型数据记录
-    if (existingPrototype) {
-      // 更新已有记录
+    if (isOverwrite) {
+      // 更新已有记录，保持原有的short_link不变
       prototypeModel.updatePrototype(prototypeId, {
         file_path: prototypePath,
       });
     } else {
-      // 创建新记录
+      // 创建新记录，并生成短链接
+      const shortLink = this.generateShortCode(prototypeName);
       prototypeModel.createPrototype({
         name: prototypeName,
         file_path: prototypePath,
+        short_link: shortLink
       });
     }
     
@@ -141,6 +146,23 @@ class StorageService {
    */
   private async removeDirectory(directory: string): Promise<void> {
     await fs.promises.rm(directory, { recursive: true, force: true });
+  }
+
+  /**
+   * 根据原型名称生成短链接码
+   * @private
+   * @param prototypeName 原型名称
+   * @returns 短链接字符串
+   */
+  private generateShortCode(prototypeName: string): string {
+    // 使用原型名称和随机值生成基于哈希的短码
+    const randomSalt = crypto.randomBytes(8).toString('hex');
+    const hash = crypto.createHash('sha256')
+      .update(`${prototypeName}-${randomSalt}-${Date.now()}`)
+      .digest('hex');
+      
+    // 取哈希的前8位作为短码
+    return hash.substring(0, 8);
   }
 }
 

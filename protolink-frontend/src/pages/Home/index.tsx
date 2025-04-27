@@ -81,7 +81,7 @@ const HomePage: React.FC = () => {
   // 处理预览按钮点击
   const handlePreview = () => {
     if (successData && successData.shortLink) {
-      window.open(`/p/${successData.shortLink}`, '_blank');
+      window.open(`/preview/${successData.shortLink}`, '_blank');
     }
   };
   
@@ -158,14 +158,14 @@ const HomePage: React.FC = () => {
               <div className="link-container">
                 <input 
                   type="text" 
-                  value={`${window.location.origin}/p/${successData.shortLink}`}
+                  value={`${window.location.origin}/preview/${successData.shortLink}`}
                   readOnly
                   className="link-input"
                 />
                 <button 
                   className="copy-button"
                   onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/p/${successData.shortLink}`);
+                    navigator.clipboard.writeText(`${window.location.origin}/preview/${successData.shortLink}`);
                     alert('链接已复制到剪贴板');
                   }}
                 >

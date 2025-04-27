@@ -93,6 +93,20 @@ class PrototypeModel {
   }
   
   /**
+   * 通过短链接获取原型
+   * @param shortLink 短链接
+   * @returns 原型信息
+   */
+  getPrototypeByShortLink(shortLink: string): PrototypeItem | null {
+    for (const prototype of this.prototypesData.values()) {
+      if (prototype.short_link === shortLink) {
+        return prototype;
+      }
+    }
+    return null;
+  }
+  
+  /**
    * 通过名称查找原型
    * @param name 原型名称
    * @returns 原型信息
@@ -149,6 +163,25 @@ class PrototypeModel {
    */
   getAllPrototypes(): PrototypeItem[] {
     return Array.from(this.prototypesData.values());
+  }
+
+  /**
+   * 分页获取原型列表
+   * @param page 页码，从1开始
+   * @param pageSize 每页数量
+   * @returns 分页结果
+   */
+  listPrototypes(page: number = 1, pageSize: number = 10): { items: PrototypeItem[], total: number } {
+    const allPrototypes = this.getAllPrototypes();
+    // 按创建时间降序排列
+    allPrototypes.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    
+    const total = allPrototypes.length;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const items = allPrototypes.slice(start, end);
+    
+    return { items, total };
   }
 }
 

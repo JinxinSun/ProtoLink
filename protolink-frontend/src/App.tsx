@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { HomePage, SuccessPage } from './pages';
+import { HomePage, SuccessPage, PreviewPage } from './pages';
 import './App.css';
 
 const App: React.FC = () => {
@@ -10,6 +10,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/preview/:shortLink" element={<PreviewPage />} />
           {/* 其他路由将在后续任务中添加 */}
         </Routes>
       </div>

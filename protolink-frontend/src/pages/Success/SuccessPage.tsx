@@ -25,7 +25,7 @@ const SuccessPage: React.FC = () => {
     console.warn('未检测到上传状态数据，使用演示数据');
     
     // 使用示例数据而不是立即跳转，便于调试
-    const demoLink = `${window.location.origin}/p/123456`;
+    const demoLink = `${window.location.origin}/preview/123456`;
     
     return (
       <div className="success-page">
@@ -50,11 +50,11 @@ const SuccessPage: React.FC = () => {
   }
 
   // 生成完整访问链接
-  const fullLink = `${window.location.origin}/p/${state.shortLink}`;
+  const fullLink = `${window.location.origin}/preview/${state.shortLink}`;
 
   // 处理预览按钮点击
   const handlePreview = () => {
-    window.open(`/p/${state.shortLink}`, '_blank');
+    window.open(`/preview/${state.shortLink}`, '_blank');
   };
 
   // 返回首页

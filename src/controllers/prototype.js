@@ -1,5 +1,6 @@
 const shortLinkService = require('../services/shortlink');
 const PrototypeModel = require('../models/prototype');
+const prototypeService = require('../services/prototype');
 
 /**
  * 原型控制器 - 负责处理原型相关API请求
@@ -88,6 +89,39 @@ class PrototypeController {
       return res.status(500).json({
         success: false,
         message: '解析链接失败'
+      });
+    }
+  }
+
+  /**
+   * 获取原型列表（分页）
+   * @param {Object} req - Express请求对象
+   * @param {Object} res - Express响应对象
+   * @returns {Promise<void>}
+   */
+  async listPrototypes(req, res) {
+    try {
+      // 从查询参数中获取分页信息
+      const { page = 1, pageSize = 10 } = req.query;
+      
+      // 调用服务层获取分页数据
+      const startTime = Date.now();
+      const result = await prototypeService.listPrototypes(page, pageSize);
+      const responseTime = Date.now() - startTime;
+      
+      // 添加响应头，用于性能监控
+      res.set('X-Response-Time', `${responseTime}ms`);
+      
+      return res.status(200).json({
+        success: true,
+        data: result,
+        responseTime
+      });
+    } catch (error) {
+      console.error('Error listing prototypes:', error);
+      return res.status(500).json({
+        success: false,
+        message: '获取原型列表失败'
       });
     }
   }

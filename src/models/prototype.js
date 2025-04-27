@@ -96,6 +96,34 @@ class PrototypeModel {
   }
   
   /**
+   * 根据ID查找原型
+   * @param {string} id - 原型ID
+   * @returns {Promise<Object|null>} 原型对象或null
+   */
+  async findById(id) {
+    try {
+      // 使用假装的数据库操作 - 实际项目中应替换为真实的数据库操作
+      const prototype = await db.prototypes.findOne({ id });
+      
+      if (!prototype) {
+        return null;
+      }
+      
+      return {
+        id: prototype.id,
+        name: prototype.name,
+        shortLink: prototype.short_link,
+        filePath: prototype.file_path,
+        createdAt: prototype.created_at,
+        updatedAt: prototype.updated_at
+      };
+    } catch (error) {
+      console.error('Error finding prototype by id:', error);
+      throw new Error('Failed to find prototype');
+    }
+  }
+  
+  /**
    * 更新原型数据
    * @param {string} id - 原型ID
    * @param {Object} updateData - 要更新的数据
@@ -129,6 +157,46 @@ class PrototypeModel {
     } catch (error) {
       console.error('Error updating prototype:', error);
       throw new Error('Failed to update prototype');
+    }
+  }
+
+  /**
+   * 获取原型列表，支持分页
+   * @param {number} page - 页码（从1开始）
+   * @param {number} pageSize - 每页数量
+   * @returns {Promise<{items: Array, total: number}>} 分页结果和总条数
+   */
+  async list(page = 1, pageSize = 10) {
+    try {
+      // 计算跳过的记录数
+      const skip = (page - 1) * pageSize;
+      
+      // 使用假装的数据库操作 - 实际项目中应替换为真实的数据库操作
+      const prototypes = await db.prototypes.find({}, { skip, limit: pageSize, sort: { created_at: -1 } });
+      const total = await db.prototypes.count({});
+      
+      // 格式化返回结果
+      const items = prototypes.map(prototype => ({
+        id: prototype.id,
+        name: prototype.name,
+        shortLink: prototype.short_link,
+        accessUrl: `${process.env.BASE_URL}/p/${prototype.short_link}`,
+        filePath: prototype.file_path,
+        createdAt: prototype.created_at,
+        updatedAt: prototype.updated_at,
+        previewUrl: `${process.env.BASE_URL}/preview/${prototype.short_link}`
+      }));
+      
+      return {
+        items,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize)
+      };
+    } catch (error) {
+      console.error('Error listing prototypes:', error);
+      throw new Error('Failed to list prototypes');
     }
   }
 }
